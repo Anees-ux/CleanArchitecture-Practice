@@ -2,21 +2,21 @@ trigger:
 - main
 
 pool:
-  vmImage: 'windows-latest' # <--- Dalta mong Windows machine select ka
+  vmImage: 'windows-latest'
 
 variables:
   buildConfiguration: 'Release'
 
 steps:
-# Step 1: SDK Install (.NET 10 environment for Jason Taylor's project)
+# Step 1: Strict order to install exact .NET 10 SDK
 - task: UseDotNet@2
-  displayName: 'Install .NET SDK 10'
+  displayName: 'Force Install .NET SDK 10'
   inputs:
     packageType: 'sdk'
-    version: '10.x'
-    includePreviewVersions: true # Yeh line lazmi hai kyunke .NET 10 latest hai
-    useGlobalJson: true
-# Step 2: Build (Factory worker kacha maal paka raha hai)
+    version: '10.0.201'
+    includePreviewVersions: true
+
+# Step 2: Build 
 - task: DotNetCoreCLI@2
   displayName: 'Build the project'
   inputs:
@@ -24,7 +24,7 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
 
-# Step 3: Publish & Zip (Biscuits pack ho rahe hain)
+# Step 3: Publish & Zip
 - task: DotNetCoreCLI@2
   displayName: 'Publish & Zip the API'
   inputs:
@@ -33,7 +33,7 @@ steps:
     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: true
 
-# Step 4: Publish Artifact (Truck ke liye parcel godown mein rakhna)
+# Step 4: Publish Artifact
 - task: PublishBuildArtifacts@1
   displayName: 'Save the Package (Artifact)'
   inputs:
