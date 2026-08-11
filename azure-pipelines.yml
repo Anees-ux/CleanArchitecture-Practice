@@ -1,0 +1,41 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest' # <--- Dalta mong Windows machine select ka
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+# Step 1: SDK Install (Latest .NET 8 environment)
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK'
+  inputs:
+    packageType: 'sdk'
+    version: '8.x' 
+
+# Step 2: Build (Factory worker kacha maal paka raha hai)
+- task: DotNetCoreCLI@2
+  displayName: 'Build the project'
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+# Step 3: Publish & Zip (Biscuits pack ho rahe hain)
+- task: DotNetCoreCLI@2
+  displayName: 'Publish & Zip the API'
+  inputs:
+    command: 'publish'
+    publishWebProjects: true 
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: true
+
+# Step 4: Publish Artifact (Truck ke liye parcel godown mein rakhna)
+- task: PublishBuildArtifacts@1
+  displayName: 'Save the Package (Artifact)'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop' 
+    publishLocation: 'Container'
