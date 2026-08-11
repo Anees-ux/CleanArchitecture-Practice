@@ -7,11 +7,14 @@ pool:
 variables:
   buildConfiguration: 'Release'
 
-ssteps:
+steps:
+# Step 1: SDK Install (.NET 10 environment for Jason Taylor's project)
 - task: UseDotNet@2
-  displayName: 'Install .NET SDK'
+  displayName: 'Install .NET SDK 10'
   inputs:
     packageType: 'sdk'
+    version: '10.x'
+    includePreviewVersions: true # Yeh line lazmi hai kyunke .NET 10 latest hai
     useGlobalJson: true
 # Step 2: Build (Factory worker kacha maal paka raha hai)
 - task: DotNetCoreCLI@2
