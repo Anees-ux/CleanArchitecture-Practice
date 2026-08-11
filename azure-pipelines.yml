@@ -7,14 +7,12 @@ pool:
 variables:
   buildConfiguration: 'Release'
 
-steps:
-# Step 1: SDK Install (Latest .NET 8 environment)
+ssteps:
 - task: UseDotNet@2
   displayName: 'Install .NET SDK'
   inputs:
     packageType: 'sdk'
-    version: '8.x' 
-
+    useGlobalJson: true
 # Step 2: Build (Factory worker kacha maal paka raha hai)
 - task: DotNetCoreCLI@2
   displayName: 'Build the project'
